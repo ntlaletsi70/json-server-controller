@@ -58,19 +58,20 @@ func ensureControllerGen() error {
 
 	step("Installing controller-gen")
 
-	abs, err := absBin()
+	absBin, err := filepath.Abs(LocalBin)
 	if err != nil {
 		return err
 	}
 
 	return sh.RunV(
 		"env",
-		"GOBIN="+abs,
+		"GOBIN="+absBin,
 		"go",
 		"install",
 		"sigs.k8s.io/controller-tools/cmd/controller-gen@"+controllerGenVersion,
 	)
 }
+
 func ensureKustomize() error {
 
 	path := filepath.Join(LocalBin, "kustomize")
@@ -81,14 +82,14 @@ func ensureKustomize() error {
 
 	step("Installing kustomize")
 
-	abs, err := absBin()
+	absBin, err := filepath.Abs(LocalBin)
 	if err != nil {
 		return err
 	}
 
 	return sh.RunV(
 		"env",
-		"GOBIN="+abs,
+		"GOBIN="+absBin,
 		"go",
 		"install",
 		"sigs.k8s.io/kustomize/kustomize/v5@"+kustomizeVersion,

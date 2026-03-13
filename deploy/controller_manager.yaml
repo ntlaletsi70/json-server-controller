@@ -1,0 +1,28 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: json-server-controller
+  namespace: argocd
+  labels:
+    app.kubernetes.io/name: json-server-controller
+    app.kubernetes.io/component: controller
+    app.kubernetes.io/managed-by: argocd
+spec:
+  project: default
+
+  source:
+    repoURL: https://github.com/ntlaletsi70/json-server-controller
+    targetRevision: main
+    path: config/default
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: json-server-controller-system
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+
+    syncOptions:
+      - CreateNamespace=true

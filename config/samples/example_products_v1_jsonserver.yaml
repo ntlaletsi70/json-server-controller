@@ -1,0 +1,22 @@
+apiVersion: example.com/v1
+kind: JsonServer
+metadata:
+  name: app-product-server
+  namespace: default
+spec:
+  replicas: 1
+  jsonConfig: |
+    {
+      "products": [
+        {
+          "id": 1,
+          "name": "Laptop",
+          "price": 1200
+        },
+        {
+          "id": 2,
+          "name": "Phone",
+          "price": 800
+        }
+      ]
+    }

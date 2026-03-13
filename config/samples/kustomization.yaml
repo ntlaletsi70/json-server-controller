@@ -1,0 +1,5 @@
+## Append samples of your project ##
+resources:
+- example_people_v1_jsonserver.yaml
+- example_products_v1_jsonserver.yaml
+# +kubebuilder:scaffold:manifestskustomizesamples

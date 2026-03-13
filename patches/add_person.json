@@ -1,0 +1,7 @@
+[
+  {
+    "op": "replace",
+    "path": "/spec/jsonConfig",
+    "value": "{\n  \"people\": [\n    {\"id\":1,\"name\":\"Person A\"},\n    {\"id\":2,\"name\":\"Person B\"},\n    {\"id\":3,\"name\":\"Person C\"}\n  ]\n}"
+  }
+]

@@ -1,0 +1,94 @@
+name: Json Server Controller CI
+
+on:
+    push:
+        branches:
+            - main
+    pull_request:
+
+env:
+    IMAGE: ttl.sh/json-server-controller:${{ github.sha }}-1h
+
+jobs:
+    # ------------------------------------------------
+    # LINT
+    # ------------------------------------------------
+
+    lint:
+        name: Lint
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v5
+
+            - uses: actions/setup-go@v5
+              with:
+                  go-version: "1.25.7"
+
+            - name: Install Mage
+              run: go install github.com/magefile/mage@latest
+
+            - name: Format
+              run: mage fmt
+
+            - name: Vet
+              run: mage vet
+
+    # ------------------------------------------------
+    # BUILD
+    # ------------------------------------------------
+
+    build:
+        name: Build Controller
+        runs-on: ubuntu-latest
+        needs: lint
+
+        steps:
+            - uses: actions/checkout@v5
+
+            - uses: actions/setup-go@v5
+              with:
+                  go-version: "1.25.7"
+
+            - name: Install Mage
+              run: go install github.com/magefile/mage@latest
+
+            - name: Ensure tools
+              run: mage ensureTools
+
+            - name: Build binary
+              run: mage build:manager
+
+    # ------------------------------------------------
+    # DOCKER BUILD
+    # ------------------------------------------------
+
+    docker:
+        name: Build Image
+        runs-on: ubuntu-latest
+        needs: build
+
+        steps:
+            - uses: actions/checkout@v5
+
+            - name: Build Image
+              run: docker build -t $IMAGE .
+
+            - name: Push Image
+              run: docker push $IMAGE
+
+    # ------------------------------------------------
+    # DEPLOY (ARGOCD)
+    # ------------------------------------------------
+
+    # deploy:
+    #     name: Trigger ArgoCD Sync
+    #     runs-on: ubuntu-latest
+    #     needs: docker
+
+    #     steps:
+    #         - name: Trigger ArgoCD Sync
+    #           run: |
+    #               curl -X POST \
+    #               -H "Authorization: Bearer $ARGOCD_TOKEN" \
+    #               https://argocd.example.com/api/v1/applications/json-server-controller/sync
